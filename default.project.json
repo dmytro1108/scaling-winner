@@ -1,0 +1,17 @@
+{
+  "name": "MVP",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+
+      "AuraScripts":        { "$className": "Folder", "$path": "src/AuraScripts" },
+      "CharacterSetup":     { "$className": "Folder", "$path": "src/CharacterSetup" },
+      "CombatScripts":      { "$className": "Folder", "$path": "src/CombatScripts" },
+      "combat-wombat":      { "$className": "Folder", "$path": "src/combat-wombat" },
+      "ENEMY1":             { "$className": "Folder", "$path": "src/ENEMY1" },
+      "HealthScripts":      { "$className": "Folder", "$path": "src/HealthScripts" },
+      "StaminaScripts":     { "$className": "Folder", "$path": "src/StaminaScripts" }
+    }
+  }
+}
