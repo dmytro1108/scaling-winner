@@ -85,10 +85,6 @@ Players.PlayerRemoving:Connect(onPlayerRemoving)
 
 game:BindToClose(function()
 	-- Save data for all players if the server shuts down
-	if game:GetService("RunService"):IsStudio() then
-		return -- Don't save in Studio playtests
-	end
-
 	for _, player in ipairs(Players:GetPlayers()) do
 		onPlayerRemoving(player)
 	end
