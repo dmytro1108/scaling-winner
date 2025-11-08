@@ -1,0 +1,51 @@
+This guide explains how to tweak existing game balance and settings. All tuning is done in one file.
+
+File to Edit: ServerScriptService/ENEMY1/Services/Config.lua
+
+How to Change...
+
+    Max Enemies on Map:
+
+        Find: MaxPopulation
+
+        Tweak: Change the number. 50 means 50 enemies will be alive at once.
+
+    Spawn Speed:
+
+        Find: SpawnInterval
+
+        Tweak: Change the number (in seconds). 1 means the SpawnDirector tries to spawn a foe every second.
+
+    Spawn Area:
+
+        Find: SpawnAreaSize and MinSpawnRadius
+
+        Tweak: These define the outer and inner circles for spawning. (This assumes you've implemented the positioning logic in SpawnDirector).
+
+    Randomness (Seed):
+
+        Find: WORLD_SEED
+
+        Tweak: Change this number to get a completely different "random" spawn sequence. Useful for testing.
+
+    Asset Paths:
+
+        Find: Paths.EnemyModels or Paths.EnemyContainer
+
+        Tweak: If you move your models in ServerStorage or want to put enemies in a different Workspace folder, change the paths here.
+
+How to Change... (Foe Specific)
+
+    Goblin Stats (Health, Speed):
+
+        File to Edit: ServerScriptService/ENEMY1/FoeConfigs/Goblin.lua
+
+        Tweak: Change the Health or WalkSpeed values.
+
+    Goblin Rarity:
+
+        File to Edit: ServerScriptService/ENEMY1/FoeConfigs/Goblin.lua
+
+        Tweak: Change the SpawnWeight value. A higher number means it's more common.
+
+        Example: If Goblin.SpawnWeight = 10 and Orc.SpawnWeight = 5, Goblins are twice as likely to spawn.

@@ -1,0 +1,113 @@
+This system is designed to completely replace the default Backpack and StarterPack. It allows a player to acquire a "sword ownership" flag, save it permanently, and then use the 'G' key to equip or unequip that sword at any time.
+
+🚀 How It Works: The Two-Phase Flow
+
+The entire system is divided into two distinct phases:
+
+Phase 1: Acquisition (One-Time Event)
+
+    A player joins. The PlayerDataHandler script loads their data. If they are new, it creates a leaderstats.HasSword value, which is false.
+
+    The player explores the "FORBIDDEN FOREST" and touches the "QUESTITEM" part.
+
+    The SwordPickup script inside "QUESTITEM" fires on .Touched.
+
+    It finds the player and checks their leaderstats.HasSword value.
+
+    Since it's false, the script sets leaderstats.HasSword to true.
+
+    The player now "owns" the sword. When they leave, PlayerDataHandler saves this true value to the DataStore.
+
+Phase 2: Equipping (Constant Toggle)
+
+    The player presses the 'G' key.
+
+    The InputController (a LocalScript) detects this key press and fires the RequestEquipToggle RemoteEvent to the server.
+
+    The EquipHandler (a server Script) is always listening for this event.
+
+    It receives the signal, securely checks the player's leaderstats.HasSword value.
+
+    If it's true, the script checks the player's Character:
+
+        If the ClassicSword is found in the Character, the script Destroy()s it (unequipping).
+
+        If the ClassicSword is not found, the script clones the master ClassicSword from ServerStorage and parents it to the Character (equipping).
+
+🗂️ File-by-File Breakdown
+
+Here is every file involved, where it lives, and what it does.
+
+## ServerScriptService
+
+This folder holds the "brain" of the system.
+
+    Systems/PlayerDataHandler.server.lua
+
+        What it is: The master data script.
+
+        What it does: Creates, loads, and saves all persistent player data. It is responsible for creating the HasSword (BoolValue) and Kills (IntValue) inside leaderstats when a player joins, and saving their values to the DataStore when they leave.
+
+    Systems/EquipHandler.server.lua
+
+        What it is: The server-side "equip" brain.
+
+        What it does: Listens for the RequestEquipToggle RemoteEvent. When it hears the signal, it performs the secure server-side check to see if the player owns the sword (HasSword == true). If they do, it handles cloning the tool from ServerStorage or destroying it from the Character.
+
+## ServerStorage
+
+This folder holds our "master copy" of items.
+
+    ClassicSword (Tool)
+
+        What it is: The master template of our sword.
+
+        What it does: Sits here, hidden from players. The EquipHandler script clones this tool when the player equips. It contains the SwordScript that handles animations and damage.
+
+## ReplicatedStorage
+
+This folder holds our network communication channels.
+
+    RequestEquipToggle (RemoteEvent)
+
+        What it is: The secure network bridge.
+
+        What it does: Allows the client (InputController) to send a "G key pressed" signal to the server (EquipHandler).
+
+## Workspace
+
+This folder holds the physical "trigger" for acquiring the sword.
+
+    FORBIDDEN FOREST/QUESTITEM (Part)
+
+        What it is: The physical pickup object.
+
+        What it does: Must have its CanTouch property checked ON. It contains the SwordPickup script.
+
+    FORBIDDEN FOREST/QUESTITEM/SwordPickup (Script)
+
+        What it is: The acquisition script.
+
+        What it does: Listens for the part.Touched event. When a valid player touches it, this script checks their HasSword value and sets it to true if it's currently false. This is the only way a player can gain ownership.
+
+## StarterPlayer
+
+This folder contains the client-side scripts.
+
+    StarterPlayerScripts/InputController.client.lua (LocalScript)
+
+        What it is: The client-side "G-key" listener.
+
+        What it does: Uses UserInputService to detect when the 'G' key is pressed. It then fires the RequestEquipToggle RemoteEvent to the server.
+
+    StarterPlayerScripts/GuiManager.client.lua (LocalScript)
+
+        What it is: The UI cleanup script.
+
+        What it does: Runs once to tell StarterGui to disable the default backpack GUI. This is essential for our custom system.
+
+## StarterPack
+
+    This folder is empty.
+
+        What it does: Nothing. By being empty, it ensures players do not spawn with any default items, which is critical for this system to work.

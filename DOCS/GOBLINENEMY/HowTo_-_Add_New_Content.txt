@@ -1,0 +1,95 @@
+This system is designed so you can add new content without editing any core logic scripts (like SpawnDirector or GameController).
+
+	How to Add a New Behavior (e.g., "Ranged Attack")
+
+Go to the Behaviors folder.
+
+	Create a new ModuleScript named RangedAttack.
+
+	Write the logic. The module should have an .Execute(attackerModel, target) function, just like MeleeAttack.
+
+		File: Behaviors/RangedAttack.lua (Example)
+		Lua
+
+		local RangedAttack = {}
+
+		function RangedAttack.Execute(attackerModel, target)
+			print(attackerModel.Name .. " is firing a projectile at " .. target.Name)
+			-- Logic to create a projectile, aim it, and fire
+		end
+
+		return RangedAttack
+
+		How to Add a New Foe (e.g., "Orc")
+
+		Go to the FoeConfigs folder.
+
+		Copy Goblin.lua and Paste it.
+
+		Rename the copy to Orc.lua.
+
+		Open Orc.lua and edit its contents.
+
+		File: FoeConfigs/Orc.lua (Example)
+		Lua
+
+		-- Point to the behaviors folder
+		local Behaviors = script.Parent.Parent.Behaviors
+
+		local OrcConfig = {
+			Name = "Orc",
+			-- Make sure you have an "Orc" model in ServerStorage.EnemyModels
+			Model = game.ServerStorage.EnemyModels.Orc, 
+
+			-- Stats
+			Health = 250,
+			WalkSpeed = 10,
+
+			-- Behaviors (Point to the *same* attack)
+			AttackBehavior = require(Behaviors.MeleeAttack),
+
+			-- Spawning Data (Orcs are rarer than Goblins)
+			SpawnWeight = 5 
+		}
+
+		return OrcConfig
+
+		That's it. The game will now automatically load the "Orc" and add it to the spawn list with a weight of 5.
+
+		How to Add a "Goblin Shaman" (Mixed Behaviors)
+
+		This shows the true power of composition.
+
+		Create RangedAttack.lua (see first step).
+
+		Create HealSelf.lua (another behavior).
+
+		Copy Goblin.lua and rename it GoblinShaman.lua.
+
+		Edit the file.
+
+		File: FoeConfigs/GoblinShaman.lua (Example)
+		Lua
+
+		local Behaviors = script.Parent.Parent.Behaviors
+
+		local GoblinShamanConfig = {
+			Name = "Goblin Shaman",
+			-- It can REUSE the Goblin model
+			Model = game.ServerStorage.EnemyModels.Goblin, 
+
+			-- Stats
+			Health = 75,
+			WalkSpeed = 12,
+
+			-- Behaviors (Give it NEW behaviors)
+			AttackBehavior = require(Behaviors.RangedAttack),
+			UtilityBehavior = require(Behaviors.HealSelf), -- (You would use this in FoeController)
+
+			-- Spawning Data
+			SpawnWeight = 2 -- Very rare
+		}
+
+		return GoblinShamanConfig
+
+		You just created a new enemy type that reuses a model but has completely different logic, all without duplicating code or editing core systems.

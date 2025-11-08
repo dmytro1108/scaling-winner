@@ -1,0 +1,49 @@
+Documentation for the Goblin class.
+
+
+
+How to Change...
+
+    The Goblin's Default Stats (Health, Damage, etc.):
+
+        File: ServerScriptService/Foes/Goblin (ModuleScript)
+
+        Code: Go to the Goblin.new() function.
+
+        Tweak: Change the values in the finalStats table.
+        Lua
+
+    local finalStats = {
+        Tier = 1,
+        Health = 50,  -- < Change This
+        Speed = 14,   -- < Change This
+        Damage = 8    -- < Change This
+    }
+
+
+
+
+
+The Goblin's "Quirks" (e.g., "Strong" Goblins):
+
+    File: ServerScriptService/Spawners/SpawnDirector (ModuleScript)
+
+    Code: Go to the GenerateQuirks() function at the bottom.
+
+    Tweak: You can change the chance of a quirk by editing self.Random:NextNumber(1, 10) == 1 (this is a 1-in-10 chance). You can change the stats it gives (e.g., newHealth, newDamage) in the same function.
+
+
+
+
+
+The Goblin's Behavior (AI Logic):
+
+    File: ServerScriptService/Foes/Goblin (ModuleScript)
+
+    Code: Go to the Goblin:Attack() and Goblin:Patrol() functions.
+
+    Tweak: These functions are currently just print() statements. This is where you would add your actual logic.
+
+        In :Attack(): Play an animation, create a hitbox, deal damage to the target.
+
+        In :Patrol(): Call self:MoveTo(someRandomPosition) to make the Goblin walk around.

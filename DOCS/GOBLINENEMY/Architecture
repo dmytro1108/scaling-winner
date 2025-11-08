@@ -1,0 +1,71 @@
+This document explains the "big picture" of the enemy system. This architecture is built on a compositional model, not inheritance. This makes it extremely flexible and easy to add new content without breaking existing systems.
+
+Think of it like building with Lego:
+
+    Behaviors are the individual bricks (e.g., "an attack," "a patrol path").
+
+    FoeConfigs are the instruction manuals (e.g., "a Goblin uses one attack brick and one patrol brick").
+
+    FoeController is the person who builds the Lego set and makes it "alive."
+
+Core Components
+
+    The "Blueprint" (FoeConfigs/Goblin.lua)
+
+        What it is: A simple data-sheet module. It is not a class.
+
+        What it does: It defines all the data for one type of foe.
+
+            Name, Model (the asset in ServerStorage).
+
+            Stats (Health, WalkSpeed).
+
+            SpawnWeight (how rare it is).
+
+            Behaviors: It points to the behavior modules it uses (e.g., AttackBehavior = require(Behaviors.MeleeAttack)).
+
+    The "Lego Brick" (Behaviors/MeleeAttack.lua)
+
+        What it is: A single-purpose module.
+
+        What it does: It provides one piece of logic. The MeleeAttack module only knows how to execute a melee attack. It does not know what a "Goblin" is or how much health it has. This makes it infinitely reusable.
+
+    The "Puppeteer" (MasterFoe/FoeController.lua)
+
+        What it is: The only class. This is the "Master Foe."
+
+        What it does: An instance of this class is created for every single enemy in the workspace. It links the "Blueprint" (data) to the "Model" (the physical part) and manages its state (like current health). When it needs to attack, it just calls the function from the AttackBehavior specified in its blueprint.
+
+Spawning & Management (The "Services")
+
+    The "Control Panel" (Services/Config.lua)
+
+        What it is: The central configuration file for the entire system.
+
+        What it does: This is where you tune all your numbers: MaxPopulation, SpawnInterval, paths to assets (EnemyModels, EnemyContainer), and the WORLD_SEED. You edit this file to tune the game.
+
+    The "Catalog" (Services/FoeRegistry.lua)
+
+        What it is: An automated service.
+
+        What it does: When the game starts, it automatically loops through the FoeConfigs folder, loads every blueprint, and builds a weighted spawn list based on the SpawnWeight in each file. You never need to edit this file.
+
+    The "Factory" (Spawners/SpawnDirector.lua)
+
+        What it is: The main spawning controller.
+
+        What it does: It runs a loop (timed by Config.SpawnInterval). In each loop, it checks if Population < MaxPopulation. If true, it:
+
+            Asks FoeRegistry for a random blueprint (e.g., it gets GoblinConfig).
+
+            Clones the blueprint.Model into the workspace.
+
+            Creates a new FoeController instance, giving it the blueprint and the new model.
+
+        You never need to edit this file.
+
+    The "Ignition Switch" (GameController.lua)
+
+        What it is: A single Script.
+
+        What it does: Its only job is to start the system. It requires the Config, FoeRegistry, and SpawnDirector and tells them to start. You never need to edit this file.
