@@ -100,6 +100,8 @@ This folder contains the client-side scripts.
 
         What it does: Uses UserInputService to detect when the 'G' key is pressed. It then fires the RequestEquipToggle RemoteEvent to the server.
 
+        "Y" - throws the sword away
+
     StarterPlayerScripts/GuiManager.client.lua (LocalScript)
 
         What it is: The UI cleanup script.
