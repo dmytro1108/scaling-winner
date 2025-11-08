@@ -41,9 +41,9 @@ local function awardOnDeathOnce(enemyHum)
         local killer = tag and tag.Value
         if killer and killer.Parent == Players then
             local ls = killer:FindFirstChild("leaderstats")
-            local score = ls and ls:FindFirstChild("Score")
-            if score then
-                score.Value += 1
+            local killsStat = ls and ls:FindFirstChild("Kills")
+            if killsStat then
+                killsStat.Value += 1
             end
         end
     end)
@@ -136,4 +136,3 @@ Players.PlayerAdded:Connect(function(player)
         end
     end)
 end)
-

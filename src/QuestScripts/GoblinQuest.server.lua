@@ -1,4 +1,4 @@
--- Watches player Score and completes the Goblin kill quest at 100 points
+-- Watches player Kills and completes the Goblin kill quest at 100 points
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
@@ -25,11 +25,11 @@ local TARGET = 100
 
 local function hookPlayer(player)
     local ls = player:WaitForChild("leaderstats")
-    local score = ls:WaitForChild("Score")
+    local kills = ls:WaitForChild("Kills")
 
     local function check()
         if player:GetAttribute("GoblinQuestComplete") then return end
-        if score.Value >= TARGET then
+        if kills.Value >= TARGET then
             player:SetAttribute("GoblinQuestComplete", true)
             questComplete:FireClient(player, "GoblinSlayer")
             -- Stop spawns globally (simple)
@@ -38,10 +38,9 @@ local function hookPlayer(player)
     end
 
     check()
-    score.Changed:Connect(check)
+    kills.Changed:Connect(check)
 end
 
 Players.PlayerAdded:Connect(function(player)
     hookPlayer(player)
 end)
-

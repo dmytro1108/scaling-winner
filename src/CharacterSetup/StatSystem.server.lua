@@ -16,7 +16,7 @@ upgradeEvent.Parent = statFolder
 local VALID = { Strength = true, Endurance = true, Agility = true }
 
 local function ensureStats(player)
-    local leaderstats = player:FindChild("leaderstats") or player:WaitForChild("leaderstats")
+    local leaderstats = player:FindFirstChild("leaderstats") or player:WaitForChild("leaderstats")
 
     local function getOrCreate(name, default)
         local obj = leaderstats:FindFirstChild(name)
@@ -52,4 +52,3 @@ upgradeEvent.OnServerEvent:Connect(function(player, statName)
     points.Value -= 1
     stat.Value += 1
 end)
-
