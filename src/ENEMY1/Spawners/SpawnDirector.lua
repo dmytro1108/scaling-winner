@@ -3,6 +3,7 @@
 -- It does NOT know what a "Goblin" is.
 
 local FoeController = require(script.Parent.Parent.MasterFoe.FoeController)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local SpawnDirector = {}
 
@@ -28,7 +29,10 @@ function SpawnDirector.Start(_Config, _FoeRegistry, _Rng)
 	-- Start the spawn loop
 	task.spawn(function()
 		while true do
-			if Population < Config.MaxPopulation then
+			local flags = ReplicatedStorage:FindFirstChild("QuestFlags")
+			local halt = flags and flags:FindFirstChild("StopGoblinSpawns")
+			local stopSpawns = halt and halt.Value
+			if (not stopSpawns) and Population < Config.MaxPopulation then
 				SpawnDirector.SpawnFoe()
 			end
 			task.wait(Config.SpawnInterval)
